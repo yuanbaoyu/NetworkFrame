@@ -1,7 +1,7 @@
 package com.xinghai.networkframelib.common;
 
 import com.google.gson.annotations.SerializedName;
-import com.xinghai.networkframelib.constants.Constants;
+import com.xinghai.networkframelib.constants.ErrorCode;
 
 /**
  * Created on 17/1/4.
@@ -28,6 +28,6 @@ public class HttpStatus {
      * @return 失败返回true, 成功返回false
      */
     public boolean isCodeInvalid() {
-        return mCode != Constants.WEB_RESP_CODE_SUCCESS;
+        return mCode != ErrorCode.WEB_RESP_CODE_SUCCESS;
     }
 }

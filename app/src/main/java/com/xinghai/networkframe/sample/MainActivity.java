@@ -14,10 +14,13 @@ import com.xinghai.networkframe.sample.net.HttpBinService;
 import com.xinghai.networkframelib.BaseObserver;
 import com.xinghai.networkframelib.RetrofitClient;
 import com.xinghai.networkframelib.common.CommonRetryWhenFunction;
-import com.xinghai.networkframelib.common.transformer.CommonTransformer;
+import com.xinghai.networkframelib.common.transformer.RxSchedulersHelper;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +29,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button rxBtn, retrofitBtn;
     private TextView contentTv;
+
+    private CompositeDisposable mDisposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         contentTv = (TextView) findViewById(R.id.contentTv);
         contentTv.setMovementMethod(ScrollingMovementMethod.getInstance());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDisposables.clear();
     }
 
     @Override
@@ -63,12 +74,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<Ip> call, Response<Ip> response) {
                 Log.e("===>", "retrofit onResponse");
-                contentTv.setText(response.body().origin);
+                if(response.isSuccessful())
+                    contentTv.setText(response.body().origin);
             }
 
             @Override
             public void onFailure(Call<Ip> call, Throwable t) {
                 Log.e("===>", "retrofit onFailure");
+
             }
         });
 
@@ -76,9 +89,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void testRx() {
         RetrofitClient.getInstance().create(A.class).get()
+                .debounce(10, TimeUnit.SECONDS)
                 .retryWhen(new CommonRetryWhenFunction())
-                .compose(new CommonTransformer())
+                .compose(RxSchedulersHelper.<ResponseBody>io_main())
                 .subscribe(new BaseObserver<ResponseBody>(this) {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        super.onSubscribe(d);
+                        mDisposables.add(d);
+                    }
 
                     @Override
                     public void onNext(ResponseBody value) {
@@ -103,4 +123,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
     }
+
 }

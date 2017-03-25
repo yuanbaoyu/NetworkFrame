@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import com.xinghai.networkframelib.common.compress.GzipRequestInterceptor;
+import com.xinghai.networkframelib.common.interceptor.GzipRequestInterceptor;
 import com.xinghai.networkframelib.common.logger.HttpLoggingInterceptor;
 import com.xinghai.networkframelib.common.parse.MultiplyConverterFactory;
 

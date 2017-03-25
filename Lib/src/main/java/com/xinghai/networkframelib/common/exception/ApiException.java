@@ -1,6 +1,7 @@
 package com.xinghai.networkframelib.common.exception;
 
 import com.xinghai.networkframelib.constants.Constants;
+import com.xinghai.networkframelib.constants.ErrorCode;
 
 /**
  * Created on 17/1/4.
@@ -21,7 +22,7 @@ public class ApiException extends RuntimeException {
      * @return 失效返回true, 否则返回false;
      */
     public boolean isTokenExpried() {
-        return mErrorCode == Constants.TOKEN_EXPRIED;
+        return mErrorCode == ErrorCode.TOKEN_EXPRIED;
     }
 
     /**
@@ -30,6 +31,6 @@ public class ApiException extends RuntimeException {
      * @return 不存在返回true，否则返回false
      */
     public boolean isTokenNotExist(){
-        return mErrorCode == Constants.TOKEN_NOT_EXIST;
+        return mErrorCode == ErrorCode.TOKEN_NOT_EXIST;
     }
 }

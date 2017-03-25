@@ -1,4 +1,4 @@
-package com.xinghai.networkframelib.common.compress;
+package com.xinghai.networkframelib.common.interceptor;
 
 import java.io.IOException;
 

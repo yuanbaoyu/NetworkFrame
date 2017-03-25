@@ -2,7 +2,7 @@ package com.xinghai.networkframelib;
 
 import android.app.Application;
 
-import com.facebook.stetho.Stetho;
+import com.xinghai.networkframelib.util.StethoHelper;
 
 /**
  * Created on 17/1/16.
@@ -10,14 +10,17 @@ import com.facebook.stetho.Stetho;
  */
 
 public class BaseApplication extends Application {
+    private static BaseApplication instance;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Stetho.initialize(
-                Stetho.newInitializerBuilder(this)
-                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                        .build());
+        instance = this;
+        StethoHelper.init(this);
     }
+
+    public static BaseApplication getInstance(){
+        return instance;
+    }
+
 }
