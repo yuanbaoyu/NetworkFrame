@@ -1,15 +1,14 @@
 package com.xinghai.networkframelib.common.result;
 
 import com.xinghai.networkframelib.common.exception.ApiException;
+import com.xinghai.networkframelib.common.transformer.RxSchedulersHelper;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * 预处理服务器返回数据
@@ -25,6 +24,16 @@ public class RxResultHelper {
      * @return
      */
     public static <T> ObservableTransformer<HttpResult<T>, T> handleResult() {
+        return handleResult(RxSchedulersHelper.<T>io_main());
+    }
+
+
+    /**
+     * 预处理结果
+     * @param <T>
+     * @return
+     */
+    public static <T> ObservableTransformer<HttpResult<T>, T> handleResult(final ObservableTransformer<T, T> scheduler) {
         return new ObservableTransformer<HttpResult<T>, T>() {
             @Override
             public ObservableSource<T> apply(Observable<HttpResult<T>> upstream) {
@@ -38,9 +47,7 @@ public class RxResultHelper {
                             return Observable.error(new ApiException(tHttpResult.meta.ecode, tHttpResult.meta.emsg));
                         }
                     }
-                }).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .unsubscribeOn(Schedulers.io());
+                }).compose(scheduler);
             }
         };
     }
